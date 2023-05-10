@@ -1,5 +1,6 @@
 #incremental algorithm : O(n log n).
 import utils 
+
 def incremental_algo(points):
     def left_turn_hull(hull, new_point):
         while len(hull) > 1 and utils.orientation(hull[-2], hull[-1], new_point) != 1:
@@ -21,3 +22,6 @@ def incremental_algo(points):
     u.pop(len(u)-1)
     l.extend(u)
     return l
+
+def plot_convex_hull(points, ch, full_close = False):
+    utils.plot_points_ch(points, ch, full_close)

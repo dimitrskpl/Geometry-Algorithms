@@ -3,72 +3,6 @@ import os
 from tqdm import tqdm
 import numpy as np
 import quickHull_algo
-from scipy.spatial import ConvexHull
-
-#code from https://www.geeksforgeeks.org/check-if-given-polygon-is-a-convex-polygon-or-not/
-############################################################
-
-def CrossProduct(A):
-     
-    # Stores coefficient of X
-    # direction of vector A[1]A[0]
-    X1 = (A[1][0] - A[0][0])
- 
-    # Stores coefficient of Y
-    # direction of vector A[1]A[0]
-    Y1 = (A[1][1] - A[0][1])
- 
-    # Stores coefficient of X
-    # direction of vector A[2]A[0]
-    X2 = (A[2][0] - A[0][0])
- 
-    # Stores coefficient of Y
-    # direction of vector A[2]A[0]
-    Y2 = (A[2][1] - A[0][1])
- 
-    # Return cross product
-    return (X1 * Y2 - Y1 * X2)
- 
-# Function to check if the polygon is
-# convex polygon or not
-def isConvex(points):
-     
-    # Stores count of
-    # edges in polygon
-    N = len(points)
- 
-    # Stores direction of cross product
-    # of previous traversed edges
-    prev = 0
- 
-    # Stores direction of cross product
-    # of current traversed edges
-    curr = 0
- 
-    # Traverse the array
-    for i in range(N):
-         
-        # Stores three adjacent edges
-        # of the polygon
-        temp = [points[i], points[(i + 1) % N],
-                           points[(i + 2) % N]]
- 
-        # Update curr
-        curr = CrossProduct(temp)
- 
-        # If curr is not equal to 0
-        if (curr != 0):
-             
-            # If direction of cross product of
-            # all adjacent edges are not same
-            if (curr * prev < 0):
-                return False
-            else:
-                 
-                # Update curr
-                prev = curr
- 
-    return True
 
 ############################################################
 
@@ -89,26 +23,19 @@ def read_points(file_name):
 
 #plot functions
 ############################################################
-
-def plot_poly(points):
-    xx,yy = get_coords(points)
-    plt.plot(xx,yy, 'b')
-    plt.scatter(xx,yy)
-    plt.show()
-
-
 #plots points as points and the convex hull ch
 #as polygon
 #points, ch: coordinates of the form [[x0,y0],...,[xn,yn]]
 #full_close: True to show figure in full screen
 # and close after pause for 1 second
 def plot_points_ch(points, ch, full_close = False):
-    xx1, yy1 = get_coords(points)
-    xx2, yy2 = get_coords(ch)
+    xxp, yyp = get_coords(points)
+    xxc, yyc = get_coords(ch)
 
-    plt.plot(xx2, yy2, 'r')
-    plt.scatter(xx1,yy1, color='b')    
-
+    plt.plot(xxc, yyc, 'r')
+    plt.scatter(xxp,yyp, color='b')    
+    plt.scatter(xxc,yyc, color='r')    
+    
     if full_close:
         manager = plt.get_current_fig_manager()
         manager.full_screen_toggle()
@@ -122,6 +49,9 @@ def plot_points_ch(points, ch, full_close = False):
 
 #geometry functions
 ############################################################
+TURN_LEFT, TURN_RIGHT, TURN_NONE = (1, -1, 0)
+
+
 def cmp(a, b):
         return (a > b) - (a < b)
 
@@ -155,6 +85,8 @@ def first_same_idx(poly1, poly2):
 def same_polygons(poly1, poly2):
   if len(poly1) != len(poly2):
     return False
+
+  
   poly2_offset = first_same_idx(poly1, poly2)
   if poly2_offset == -1:
     return False
@@ -165,51 +97,60 @@ def same_polygons(poly1, poly2):
 
   return True
 
+def correct_ch(points, ch):
+  correct_ch = quickHull_algo.quickHull_algo(points)
+  #correct_ch = quickHull_algo.q_ch_to_list(correct_ch, np.array(points))
+  return same_polygons(ch, correct_ch)
+
 def test(path, ch_algo, plot=False):
   print(path)
   dir_list = os.listdir(path)
   for file in dir_list:
     if file[0] == '.':
       dir_list.remove(file)
+  succ = True
   for i in tqdm (range (len(dir_list)),desc="Loading…",ascii=False, ncols=75):  
     file = dir_list[i]
     file = path + file
+    #print(f'File: {file}')
     points = read_points(file)
     ch = ch_algo(points)
     if plot:
-      plot_points_ch(points, ch, True)
+      plot_points_ch(points, ch, False)
     
-    np_points = np.array(points)
-    correct_ch = ConvexHull(np_points)
-    correct_ch_list = quickHull_algo.q_ch_to_list(correct_ch, np_points)
-    if not same_polygons(ch, correct_ch_list):
+    if not correct_ch(points, ch):
       print(f'Failed in file {file}')
-      return
+      succ = False
+      break
     
-  print('Success')
+  if succ:
+    print('Success')
+  else:
+    print('Failed')
 
-def test2(path,plot=False):
-  dir_list = os.listdir(path)
-  for file in dir_list:
-    if file[0] == '.':
-      dir_list.remove(file)
-  for i in tqdm (range (len(dir_list)),desc="Loading…",ascii=False, ncols=75):  
-    file = dir_list[i]
-    file = path + file
 
-    points = read_points(file)
-    np_points = np.array(points)
-    ch = quickHull_algo.quickHull_algo(np_points)
-    ch = quickHull_algo.q_ch_to_list(ch, np_points)
-    
-    if not isConvex(ch):
-      print(f'Failed in file {file}')
-      return
+def test_rand_psets(points_sets, ch_algo, plot=False):
+  #for i in tqdm(range(len(points_sets)),desc="Loading…",ascii=False, ncols=75):  
+  for i in range(len(points_sets)):
+    points = points_sets[i]
+    #print(points)
+    ch = ch_algo(points)#,plot=True, full_close=False)
+
     if plot:
-       plot_points_ch(points, ch, True)
+      plot_points_ch(points, ch, False)
     
+    if not correct_ch(points, ch):
+      cor_ch = quickHull_algo.quickHull_algo(np.array(points))
+      cor_ch = quickHull_algo.q_ch_to_list(cor_ch, np.array(points))
+      print(f'Real sz: {len(cor_ch)}, computed sz: {len(ch)}')
+      print(f'Failed for point set sz: {len(points)}')
+      print(ch)
+      print(cor_ch)
+      #print(points)
+      plot_points_ch(points, ch)
+      
+
+
+      break
   print('Success')
-
-
-
 ############################################################

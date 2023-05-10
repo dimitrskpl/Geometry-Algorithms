@@ -2,7 +2,7 @@
 import utils
 import numpy as np
 
-def left_most_point(points):
+def left_down_most_point(points):
   first_point_idx = 0
   first_point = points[0]
   for i in range(1, len(points)-1):
@@ -11,9 +11,8 @@ def left_most_point(points):
       first_point_idx = i
   return first_point_idx, first_point
 
-
 def gift_wraping_algo(points):
-    start_point_idx, r =  left_most_point(points)
+    start_point_idx, r =  left_down_most_point(points)
     r_idx = start_point_idx
     ch=[r]
     while (True):
@@ -30,5 +29,8 @@ def gift_wraping_algo(points):
         ch.append(points[t_idx])
 
     return ch
+
+def plot_convex_hull(points, ch, full_close = False):
+    utils.plot_points_ch(points, ch, full_close)
 
 
