@@ -28,10 +28,13 @@ def read_points(file_name):
 #points, ch: coordinates of the form [[x0,y0],...,[xn,yn]]
 #full_close: True to show figure in full screen
 # and close after pause for 1 second
-def plot_points_ch(points, ch, full_close = False):
+def plot_points_ch(points, ch, title = '', full_close = False):
     xxp, yyp = get_coords(points)
     xxc, yyc = get_coords(ch)
 
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.title(title)
     plt.plot(xxc, yyc, 'r')
     plt.scatter(xxp,yyp, color='b')    
     plt.scatter(xxc,yyc, color='r')    
@@ -98,7 +101,7 @@ def same_polygons(poly1, poly2):
   return True
 
 def correct_ch(points, ch):
-  correct_ch = quickHull_algo.quickHull_algo(points)
+  correct_ch,_ = quickHull_algo.quickHull_algo(points)
   #correct_ch = quickHull_algo.q_ch_to_list(correct_ch, np.array(points))
   return same_polygons(ch, correct_ch)
 
@@ -130,18 +133,16 @@ def test(path, ch_algo, plot=False):
 
 
 def test_rand_psets(points_sets, ch_algo, plot=False):
-  #for i in tqdm(range(len(points_sets)),desc="Loading…",ascii=False, ncols=75):  
   for i in range(len(points_sets)):
     points = points_sets[i]
-    #print(points)
-    ch = ch_algo(points)#,plot=True, full_close=False)
+    ch,_ = ch_algo(points)#,plot=True, full_close=False)
 
     if plot:
       plot_points_ch(points, ch, False)
     
     if not correct_ch(points, ch):
-      cor_ch = quickHull_algo.quickHull_algo(np.array(points))
-      cor_ch = quickHull_algo.q_ch_to_list(cor_ch, np.array(points))
+      cor_ch,_ = quickHull_algo.quickHull_algo(np.array(points))
+      #cor_ch = quickHull_algo.q_ch_to_list(cor_ch, np.array(points))
       print(f'Real sz: {len(cor_ch)}, computed sz: {len(ch)}')
       print(f'Failed for point set sz: {len(points)}')
       print(ch)

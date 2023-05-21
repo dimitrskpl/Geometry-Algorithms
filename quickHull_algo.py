@@ -1,12 +1,15 @@
 import numpy as np
 from scipy.spatial import ConvexHull
-import utils 
-
+import time
 #points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
 def quickHull_algo(points):
+    if len(points) < 3:
+      return [], 0
     points = np.array(points)
+    start = time.time()
     ch = ConvexHull(points)
-    return q_ch_to_list(ch, points)
+    end = time.time()
+    return q_ch_to_list(ch, points), end-start
 
 #points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
 #ch: convex hull of 3d points returned by scipy
