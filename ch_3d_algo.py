@@ -4,6 +4,9 @@ import numpy as np
 import time
 
 #points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#if plot == True, the convex hull is plotted
+#returns convex hull and computing time
+#using quickHull algorithm of scipy
 def ch_3d_algo(points, plot=False):
     if len(points) < 3:
        return [], 0
@@ -15,7 +18,8 @@ def ch_3d_algo(points, plot=False):
         plot_convex_hull(ch, points)
     return ch_to_list(ch), end-start
     
-
+#ch: convex hull of 3d points returned by scipy ConvexHull
+#returns the convex hull in list
 def ch_to_list(ch):
     ch_list = []
     for vertex in ch.vertices:
@@ -24,7 +28,8 @@ def ch_to_list(ch):
     return ch_list
 
 #points: numpy array
-#ch: convex hull of 3d points returned by scipy
+#ch: convex hull of 3d points returned by scipy ConvexHull
+#plots the 3D convex hull
 def plot_convex_hull(ch, points):
     points=np.array(points)
     fig = plt.figure()
@@ -35,7 +40,7 @@ def plot_convex_hull(ch, points):
     for s in ch.simplices:
         s = np.append(s, s[0]) 
         ax.plot(points[s, 0], points[s, 1], points[s, 2], "r-")
-        #ax.scatter3D(points[s, 0], points[s, 1], points[s, 2], color="red")
+        ax.scatter3D(points[s, 0], points[s, 1], points[s, 2], color="red")
 
     for i in ["x", "y", "z"]:
         eval("ax.set_{:s}label('{:s}')".format(i, i))

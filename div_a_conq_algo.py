@@ -3,6 +3,8 @@ import utils
 import matplotlib.pyplot as plt
 import time
 
+#points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#Returns index of the left most point
 def left_most_point(points):
   left_most_p_idx = 0
   left_most_p = points[0]
@@ -12,6 +14,8 @@ def left_most_point(points):
       left_most_p_idx = i
   return left_most_p_idx 
 
+#points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#Returns index of the right most point
 def right_most_point(points):
   right_p_idx = 0
   right_p = points[0]
@@ -21,14 +25,17 @@ def right_most_point(points):
       right_p_idx = i
   return right_p_idx
 
+
 def prev_point_idx(idx, sz):
     return (sz-1 if idx == 0 else idx - 1)
 
 def nxt_point_idx(idx, sz):
    return (idx + 1) % sz
 
-def line_crosses_poly(p, q, ch, turn):
-    for r in ch:
+#Checks if line crosses polygon based on turn
+#If so, returns True, else False
+def line_crosses_poly(p, q, poly, turn):
+    for r in poly:
        if r == q:
           continue
        orient = utils.orientation(p,q,r)
@@ -37,12 +44,13 @@ def line_crosses_poly(p, q, ch, turn):
     return False
 
 
-#l_ch, r_ch: two polygons having points in CCW
-#all points of l_ch have smaller x coordinates than r_ch
-#l_ch_r_p_idx: the right most point of l_ch
-#r_ch_l_p_idx: the left most point of right ch
-#returns indexes corresponding to l_ch, r_ch
-#forming the upper tangent
+#l_ch, r_ch: two polygons having points in CCW all points of l_ch have 
+#smaller x coordinates than r_ch l_ch_r_p_idx: the right most point of l_ch
+#r_ch_l_p_idx: the left most point of right ch. Returns indexes corresponding 
+#to l_ch, r_ch forming the upper tangent
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
 def upper_tangent(l_ch, r_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot=False, full_close=False):
     l_ch_up_tan_idx = l_ch_r_p_idx
     r_ch_up_tan_idx = r_ch_l_p_idx
@@ -74,16 +82,13 @@ def upper_tangent(l_ch, r_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot=False, full_close
             l_nxt = l_ch[l_nxt_idx]
             r_prev_idx = prev_point_idx(r_ch_up_tan_idx, len(r_ch))
             r_prev = r_ch[r_prev_idx]
-            collinear = False
 
             if utils.orientation(r_prev, r_ch_up_tan_p, l_ch_up_tan_p) == utils.TURN_NONE:
-               collinear = True
                r_ch_up_tan_idx = r_prev_idx
                r_ch_up_tan_p = r_prev
                if plot:
                    plot_ch_lines(l_ch=l_ch, r_ch=r_ch, lines=[[l_ch_up_tan_p, r_ch_up_tan_p]], title='Candidate upper tangent', full_close=full_close)
             if utils.orientation(r_ch_up_tan_p, l_ch_up_tan_p, l_nxt) == utils.TURN_NONE:
-               collinear = True
                l_ch_up_tan_idx = l_nxt_idx
                l_ch_up_tan_p = l_nxt
                if plot:
@@ -94,12 +99,13 @@ def upper_tangent(l_ch, r_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot=False, full_close
             return l_ch_up_tan_idx, r_ch_up_tan_idx
 
 
-#l_ch, r_ch: two polygons having points in CCW
-#all points of l_ch have smaller x coordinates than r_ch
-#l_ch_r_p_idx: the right most point of l_ch
-#r_ch_l_p_idx: the left most point of right ch
-#returns indexes corresponding to l_ch, r_ch
-#forming the lower tangent
+#l_ch, r_ch: two polygons having points in CCW all points of l_ch have smaller 
+#x coordinates than r_ch l_ch_r_p_idx: the right most point of l_ch
+#r_ch_l_p_idx: the left most point of right ch. Returns indexes corresponding 
+#to l_ch, r_ch forming the lower tangent
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
 def lower_tangent(l_ch, r_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot=False, full_close=False):
     l_ch_low_tan_idx = l_ch_r_p_idx
     r_ch_low_tan_idx = r_ch_l_p_idx
@@ -131,16 +137,13 @@ def lower_tangent(l_ch, r_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot=False, full_close
             l_prev = l_ch[l_prev_idx]
             r_nxt_idx = nxt_point_idx(r_ch_low_tan_idx, len(r_ch))
             r_nxt = r_ch[r_nxt_idx]
-            collinear = False
 
             if utils.orientation(r_nxt, r_ch_low_tan_p, l_ch_low_tan_p) == utils.TURN_NONE:
-                collinear = True
                 r_ch_low_tan_idx = r_nxt_idx
                 r_ch_low_tan_p = r_nxt
                 if plot:
                     plot_ch_lines(l_ch=l_ch, r_ch=r_ch, lines=[[l_ch_low_tan_p, r_ch_low_tan_p]], title='Candidate lower tangent', full_close=full_close)
             if utils.orientation(r_ch_low_tan_p, l_ch_low_tan_p, l_prev) == utils.TURN_NONE:
-                collinear = True
                 l_ch_low_tan_idx = l_prev_idx
                 l_ch_low_tan_p = l_prev
                 if plot:
@@ -151,6 +154,9 @@ def lower_tangent(l_ch, r_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot=False, full_close
                
             return l_ch_low_tan_idx, r_ch_low_tan_idx
 
+#Returns True if there is one pair
+#of points with same x coordinate
+#Otherwise returns False
 def same_x_coord(points):
     x_coords = set()
     for p in points:
@@ -161,15 +167,13 @@ def same_x_coord(points):
     
     return False
 
+#Merge the left_ch and right_ch convex hulls
+#Returns the merged convex hull
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
 def merge(left_ch, right_ch, plot=False, full_close=False):
     merged_ch = []
-    # if same_x_coord(left_ch+right_ch):
-    #     l_ch_min_y = min(left_ch, key=lambda p:p[1])
-    #     l_ch_r_p_idx = left_ch.index(l_ch_min_y)
-    #     r_ch_min_y = max(right_ch, key=lambda p:p[1])
-    #     r_ch_l_p_idx = right_ch.index(r_ch_min_y)
-    #     merged_ch = [left_ch[l_ch_r_p_idx], right_ch[r_ch_l_p_idx]]
-    # else:
     l_ch_r_p_idx  = right_most_point(left_ch)
     r_ch_l_p_idx = left_most_point(right_ch)
     l_ch_up_tan_idx, r_ch_up_tan_idx = upper_tangent(left_ch, right_ch, l_ch_r_p_idx, r_ch_l_p_idx, plot, full_close)
@@ -196,20 +200,11 @@ def merge(left_ch, right_ch, plot=False, full_close=False):
     
     return merged_ch 
 
-def div_and_qonquer_algo(points, plot=False, full_close=False):
-    start = time.time()
-
-    if len(points) < 3 or same_x_coord(points):
-        return [], 0
-    
-    points = sorted(points) 
-    ch = compute_ch(points, plot, full_close)
-    end = time.time()
-    if plot:
-        utils.plot_points_ch(points=points, ch=ch, title='Divide & Conquer Convex Hull')
-    return ch, end-start
-
-
+#points: sorted list of the form [[x0,y0],[x1,y1],...,[xn,yn]] 
+#returns convex hull and computing time using divide and conquer algorithm 
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
 def compute_ch(points, plot=False, full_close=False):
     if len(points) <= 5:
         ch, _= incr_algo.incremental_algo(points)
@@ -234,7 +229,29 @@ def compute_ch(points, plot=False, full_close=False):
         utils.plot_points_ch(points=points, ch=ch, title='Merged Convex Hull', full_close=full_close)
     return ch
 
-def plot_ch_points(left_points, right_points, left_ch, right_ch, title='', full_close=False):#points=None):
+#points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#returns convex hull and computing time using divide and conquer algorithm 
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
+def div_and_conquer_algo(points, plot=False, full_close=False):
+    start = time.time()
+
+    if len(points) < 3 or same_x_coord(points):
+        return [], 0
+    
+    points = sorted(points) 
+    ch = compute_ch(points, plot, full_close)
+    end = time.time()
+    if plot:
+        utils.plot_points_ch(points=points, ch=ch, title='Divide & Conquer Convex Hull')
+    return ch, end-start
+
+#plots 2 convex hulls and the points inside them
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
+def plot_ch_points(left_points, right_points, left_ch, right_ch, title='', full_close=False):
     xlp, ylp = utils.get_coords(left_points)
     xlc, ylc = utils.get_coords(left_ch)
     xrp, yrp = utils.get_coords(right_points)
@@ -259,6 +276,10 @@ def plot_ch_points(left_points, right_points, left_ch, right_ch, title='', full_
     else:
         plt.show()
 
+#Plots the convex hulls l_ch, r_ch and the lines connecting them
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
 def plot_ch_lines(l_ch, r_ch, lines, title='', full_close= False):
     xlc, ylc = utils.get_coords(l_ch)
     xrc, yrc = utils.get_coords(r_ch)
@@ -282,6 +303,7 @@ def plot_ch_lines(l_ch, r_ch, lines, title='', full_close= False):
     else:
         plt.show()
 
+#returns min and max y coordinate of points
 def min_max_y(points):
     min_y = points[0][1]
     max_y = points[0][1]
@@ -293,6 +315,11 @@ def min_max_y(points):
             max_y = p_y
     return min_y, max_y
 
+#Plots 2 point sets left_points, right_points 
+#and a dashed line dividing them
+#If plot=True then plots results
+#If full_close=True then each figure is displayed
+#in full screen and is automaticaly closed after 1 sec
 def plot_divided_point_sets(left_points, right_points, title='', full_close=False):
     xxl, yyl = utils.get_coords(left_points)
     xxr, yyr = utils.get_coords(right_points)

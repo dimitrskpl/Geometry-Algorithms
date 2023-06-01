@@ -2,6 +2,9 @@
 import utils 
 import time
 
+#new_point: [x0,y0]
+#hull: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#returns left turn hull taking into consideration the new point
 def left_turn_hull(hull, new_point):
         while len(hull) > 1 and utils.orientation(hull[-2], hull[-1], new_point) != 1:
             hull.pop()
@@ -9,6 +12,9 @@ def left_turn_hull(hull, new_point):
             hull.append(new_point)
         return hull
 
+#points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#returns convex hull and computing time
+#using incremental algorithm 
 def incremental_algo(points):
     if len(points) < 3:
          return [], 0
@@ -26,6 +32,3 @@ def incremental_algo(points):
     l.extend(u)
     end = time.time()
     return l, end-start
-
-def plot_convex_hull(points, ch, full_close = False):
-    utils.plot_points_ch(points, ch, full_close)

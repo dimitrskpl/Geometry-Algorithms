@@ -3,6 +3,9 @@ import utils
 import numpy as np
 import time
 
+#points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+#finds the most left and down point 
+#returns this points and its index
 def left_down_most_point(points):
   first_point_idx = 0
   first_point = points[0]
@@ -12,6 +15,9 @@ def left_down_most_point(points):
       first_point_idx = i
   return first_point_idx, first_point
 
+#points: list of the form [[x0,y0],[x1,y1],...,[xn,yn]]
+##returns convex hull and computing time
+#using gift wraping algorithm
 def gift_wraping_algo(points):
     if len(points) < 3:
        return [], 0
@@ -34,8 +40,5 @@ def gift_wraping_algo(points):
 
     end = time.time()
     return ch, end-start
-
-def plot_convex_hull(points, ch, full_close = False):
-    utils.plot_points_ch(points, ch, full_close)
 
 
