@@ -1,9 +1,6 @@
 import matplotlib.pyplot as plt
 
-#plot functions
-############################################################
-#plots points as points and the convex hull ch
-#as polygon
+#scatter plots points and plots the convex hull ch as polygon
 #points, ch: coordinates of the form [[x0,y0],...,[xn,yn]]
 #full_close: True to show figure in full screen
 # and close after pause for 1 second
@@ -27,10 +24,7 @@ def plot_points_ch(points, ch, title = '', full_close = False):
     else:
         plt.show()
 
-############################################################
 
-#geometry functions
-############################################################
 TURN_LEFT, TURN_RIGHT, TURN_NONE = (1, -1, 0)
 
 def cmp(a, b):
@@ -45,7 +39,7 @@ def orientation(p, q, r):
 
 #points: coordinates of the form [[x0,y0],...,[xn,yn]]
 #returns 2 lists containing all x and all y
-#y coordinates correspondingly
+#coordinates correspondingly
 def get_coords(points):
   xx = []
   yy = []
