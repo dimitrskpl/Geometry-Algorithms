@@ -1,4 +1,9 @@
 # Convex-Hull-Algorithms
+
+**Kyriakopoulos Dimitris**  
+**1115201900093**
+
+
 Given a set of points in the plane, the convex hull of the set is the smallest convex polygon that contains all the points of it. In this project we implemented well-known convex hull algorithms for 2D and 3D points, illustrated the correspondence between the Delaunay triangulation and the Voronoi diagram and implement KD trees for orthogonal geometric search. More specifically for the convex hull of 2D points we used the incremental, the Jarvis, the Divide & Conquer and the Quick Hull algorithms to compute the convex hull of 2D point datasets. The Quick Hull was used for the computation of convex hull of 3D points dataset too. We compare each method based on the quality of the results and the runtime required to compute the convex hull. Each point set used in the execution of the algorithms was randomly generated using the discrete uniform distribution.
 
 ## Convex Hull Visualizations
@@ -102,3 +107,12 @@ Given a randomly generated point set of 50 points, in the images below we illust
 
 
 Overall, both Voronoi diagrams and Delaunay triangulations have similar time and space complexities, making them computationally efficient for moderate-sized inputs.
+
+## Usage - Requirements
+The execution command is: 
+
+```
+$ python geometry_algos.py
+```
+
+The tabulate and scipy packages are neccessary for this project.
