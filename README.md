@@ -1,4 +1,4 @@
-# Convex-Hull-Algorithms
+# Geometry-Algorithms
 
 **Kyriakopoulos Dimitris**  
 **1115201900093**
