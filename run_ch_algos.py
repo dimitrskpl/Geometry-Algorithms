@@ -102,7 +102,7 @@ def all_2D_algos_ch(points, print_ch=False, plot=False):
 # for each random point set with sizes 10,100,1000,10000
 # including collinear points
 def ch_algos_collinear():
-    p_sets_sz = [10, 100, 1000, 10000]
+    p_sets_sz = [10, 100, 1000, 10000]#, 100000]
     p_sets_2D_collinear = []
     for sz in p_sets_sz:
         p_set_2D_collinear = points_generator.gen_2D_points(min=0, max=1000000, size=sz, collinear_ratio=0.4)
@@ -129,7 +129,7 @@ def div_conquer_visualize():
 # for each random point set with sizes 10,100,1000,10000. 
 # The one table corresponds to points sets with different x coords
 def compare_2D_ch_algos():
-    p_sets_sz = [10, 100, 1000, 10000]
+    p_sets_sz = [10, 100, 1000, 10000]#, 100000]
     p_sets_2D = []
     p_sets_2D_dif_x = []
     for sz in p_sets_sz:

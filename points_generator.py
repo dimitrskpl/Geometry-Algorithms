@@ -98,3 +98,38 @@ def gen_3D_points(min=0, max=100, size=10):
         if p not in points:
             points.append(p)
     return points
+
+#returns [[min_x, min_y], [max_x, max_y]] bounding box
+#where min_x, max_x are random in range of min and max x of points
+#and min_y, max_y are random in range of min and max y of points
+def box_generator(points):
+  xx = [p[0] for p in points]
+  yy = [p[1] for p in points]
+
+  min_x = min(xx)
+  min_y = min(yy)
+  max_x = max(xx)
+  max_y = max(yy)
+
+
+  x1 = random.randint(min_x, max_x)
+  x2 = random.randint(min_x, max_x)
+  while x2 == x1:
+    x2 = random.randint(min_x, max_x)
+
+  y1 = random.randint(min_y, max_y)
+  y2 = random.randint(min_y, max_y)
+  while y2 == y1:
+    y2 = random.randint(min_y, max_y)
+    
+  if x2 < x1:
+    tmp = x2
+    x2 = x1
+    x1 = tmp
+
+  if y2 < y1:
+    tmp = y2
+    y2 = y1
+    y1 = tmp
+
+  return [[x1,y1], [x2,y2]]
